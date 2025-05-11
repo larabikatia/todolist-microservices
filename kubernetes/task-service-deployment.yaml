@@ -19,8 +19,12 @@ spec:
         image: todoapp/task-service:latest
         imagePullPolicy: Never
         env:
-        - name: SPRING_DATA_MONGODB_HOST
-          value: mongodb
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:mysql://mysql:3306/taskdb?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "todoapp"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: "password"
         - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
           value: http://eureka-server:8761/eureka/
         ports:

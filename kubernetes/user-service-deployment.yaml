@@ -20,11 +20,11 @@ spec:
         imagePullPolicy: Never
         env:
         - name: SPRING_DATASOURCE_URL
-          value: jdbc:mysql://mysql:3306/userdb?createDatabaseIfNotExist=true
+          value: "jdbc:mysql://mysql:3306/userdb?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false"
         - name: SPRING_DATASOURCE_USERNAME
-          value: root
+          value: "todoapp"
         - name: SPRING_DATASOURCE_PASSWORD
-          value: root
+          value: "password"
         - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
           value: http://eureka-server:8761/eureka/
         ports:

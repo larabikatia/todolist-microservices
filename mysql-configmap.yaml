@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-init-script
+data:
+  init.sql: |
+    CREATE DATABASE IF NOT EXISTS userdb;
+    CREATE DATABASE IF NOT EXISTS listdb;
+    CREATE USER IF NOT EXISTS 'todoapp'@'%' IDENTIFIED BY 'password';
+    GRANT ALL PRIVILEGES ON userdb.* TO 'todoapp'@'%';
+    GRANT ALL PRIVILEGES ON listdb.* TO 'todoapp'@'%';
+    FLUSH PRIVILEGES;
