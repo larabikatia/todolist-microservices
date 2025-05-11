@@ -1,0 +1,111 @@
+services:
+  # Eureka Server
+  eureka-server:
+    build: ./eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - microservices-network
+
+  # MongoDB
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - microservices-network
+
+  # MySQL
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: userdb
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - microservices-network
+    command: --default-authentication-plugin=mysql_native_password
+
+  # Task Service
+  task-service:
+    build: ./task-service
+    depends_on:
+      - eureka-server
+      - mongodb
+    environment:
+      - SPRING_DATA_MONGODB_HOST=mongodb
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    ports:
+      - "8081:8081"
+    networks:
+      - microservices-network
+
+  # User Service
+  user-service:
+    build: ./user-service
+    depends_on:
+      - eureka-server
+      - mysql
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/userdb?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=todoapp
+      - SPRING_DATASOURCE_PASSWORD=password
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    ports:
+      - "8082:8082"
+    networks:
+      - microservices-network
+
+  # List Service
+  list-service:
+    build: ./list-service
+    depends_on:
+      - eureka-server
+      - mysql
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/listdb?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=todoapp
+      - SPRING_DATASOURCE_PASSWORD=password
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    ports:
+      - "8083:8083"
+    networks:
+      - microservices-network
+
+  # API Gateway
+  api-gateway:
+    build: ./api-gateway
+    depends_on:
+      - eureka-server
+      - task-service
+      - user-service
+      - list-service
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    ports:
+      - "8080:8080"
+    networks:
+      - microservices-network
+
+  # Frontend
+  frontend:
+    build: ./todo-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  mysql_data:
