@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080/api/lists';
+const API_URL = 'http://localhost:8083/api/lists';
 
 class ListService {
   getAllLists() {
