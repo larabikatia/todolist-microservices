@@ -20,6 +20,18 @@ spring:
           predicates:
             - Path=/api/lists/**
 
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:3000"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+            allowedHeaders: "*"
+            allowCredentials: true
+
 eureka:
   client:
     service-url:
